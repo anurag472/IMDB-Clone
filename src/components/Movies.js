@@ -1,59 +1,49 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Pagination from "./Pagination";
 
-const movies = [
-  {
-    id: 100,
-    posterURl:
-      "https://imgs.search.brave.com/rpWs8H4X8RVGJ1FUuWTJPWf7pLpYsxWbs7XUbllYJkk/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9jZG4u/Y2luZW1hdGVyaWFs/LmNvbS9wLzI5N3gv/bnQ0NG15ZmIvdGhl/LWJhdG1hbi1tb3Zp/ZS1wb3N0ZXItbWQu/anBnP3Y9MTY0MzE5/NTIzNg",
-    title: "The Batman",
-  },
-  {
-    id: 200,
-    posterURl:
-      "https://imgs.search.brave.com/khRwKGfVVgSY9S8mKDOCMSV1EN98xniitmupvBECz6g/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NTFFK282MDM2a0wu/anBn",
-    title: "The Joker",
-  },
-  {
-    id: 300,
-    posterURl:
-      "https://imgs.search.brave.com/bC_02YpQElABsjfME9a-zf3djSa2tUtiILPGL1zFVRQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9teXBv/c3RlcmNvbGxlY3Rp/b24uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDE4LzA4L1Ro/ZS1EYXJrLUtuaWdo/dC1Qb3N0ZXItMjAx/OC1NeVBvc3RlckNv/bGxlY3Rpb24uY29t/LTEtNjgzeDEwMjQu/anBn",
-    title: "The Dark Knight",
-  },
-  {
-    id: 300,
-    posterURl:
-      "https://imgs.search.brave.com/bC_02YpQElABsjfME9a-zf3djSa2tUtiILPGL1zFVRQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9teXBv/c3RlcmNvbGxlY3Rp/b24uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDE4LzA4L1Ro/ZS1EYXJrLUtuaWdo/dC1Qb3N0ZXItMjAx/OC1NeVBvc3RlckNv/bGxlY3Rpb24uY29t/LTEtNjgzeDEwMjQu/anBn",
-    title: "The Dark Knight",
-  },
-  {
-    id: 300,
-    posterURl:
-      "https://imgs.search.brave.com/bC_02YpQElABsjfME9a-zf3djSa2tUtiILPGL1zFVRQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9teXBv/c3RlcmNvbGxlY3Rp/b24uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDE4LzA4L1Ro/ZS1EYXJrLUtuaWdo/dC1Qb3N0ZXItMjAx/OC1NeVBvc3RlckNv/bGxlY3Rpb24uY29t/LTEtNjgzeDEwMjQu/anBn",
-    title: "The Dark Knight",
-  },
-  {
-    id: 300,
-    posterURl:
-      "https://imgs.search.brave.com/bC_02YpQElABsjfME9a-zf3djSa2tUtiILPGL1zFVRQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9teXBv/c3RlcmNvbGxlY3Rp/b24uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDE4LzA4L1Ro/ZS1EYXJrLUtuaWdo/dC1Qb3N0ZXItMjAx/OC1NeVBvc3RlckNv/bGxlY3Rpb24uY29t/LTEtNjgzeDEwMjQu/anBn",
-    title: "The Dark Knight",
-  },
-];
+const apiKey = "3ad0821bf875247853613c4d6b1eff89";
 
 function Movies() {
+  const [movies, setMovies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const getMovies = async () => {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}&page=${currentPage}`
+    );
+    setMovies(response.data.results);
+  };
+  useEffect(() => {
+    getMovies();
+  }, [currentPage]);
+
+  const resetPageNo = () => {
+    setCurrentPage(1);
+  };
+
+  const increasePageNo = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const decreasePageNo = () => {
+    currentPage > 1 && setCurrentPage(currentPage - 1);
+  };
+
   return (
     <div>
       <div className="text-2xl mt-4 mb-8 font-bold text-center">
         Trending Movies
       </div>
-      <div className="flex flex-wrap">
+      <div className="flex justify-around flex-wrap">
         {movies.map((movie) => {
           return (
             <div
               style={{
-                backgroundImage: `url(${movie.posterURl})`,
+                backgroundImage: `url(https://image.tmdb.org/t/p/original/t/p/w500/${movie.poster_path})`,
               }}
               key={movie.id}
-              className="w-[200px] h-[35vh] bg-center bg-cover m-4 md:h-[40vh] md:w-[250px] flex items-end rounded-xl"
+              className="overflow-hidden w-[250px] h-[30vh] bg-center bg-cover m-4 md:h-[35vh] md:w-[250px] flex items-end rounded-xl hover:scale-110 duration-300"
             >
               <div className="text-white font-bold text-center w-full bg-gray-900 bg-opacity-60">
                 {movie.title}
@@ -62,6 +52,13 @@ function Movies() {
           );
         })}
       </div>
+
+      <Pagination
+        resetPageNo={resetPageNo}
+        decreasePageNo={decreasePageNo}
+        increasePageNo={increasePageNo}
+        page={currentPage}
+      />
     </div>
   );
 }
